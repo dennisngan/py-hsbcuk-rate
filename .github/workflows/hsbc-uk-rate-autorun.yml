@@ -1,0 +1,41 @@
+name: Run HSBC UK rate Scrapper
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * 1-5"
+  push:
+    branches:
+      - main
+jobs:
+  Scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: setup python env
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: create credentials.json .env from github secrets
+        run: |
+          echo "$CREDENTIALS_JSON" > credentials.json
+          echo "TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN" > .env
+          echo "TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID" >> .env
+          echo "GSHEET_URL=$GSHEET_URL" >> .env
+        env:
+          CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}  #copy from github secrets
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GSHEET_URL: ${{ secrets.GSHEET_URL }}
+
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install https://github.com/nithinmurali/pygsheets/archive/staging.zip
+
+      - name: Run the script
+        run: python HsbcRate.py

@@ -6,11 +6,14 @@ import requests
 from loguru import logger
 from lxml import etree
 from pygsheets import Spreadsheet, Worksheet
+from dotenv import load_dotenv
 
 from TelBot import TelBot
 
 
 class HsbcRate:
+    load_dotenv()
+
     def __init__(self):
         log_path = os.path.dirname(__file__) + "/log"
         os.makedirs(log_path, exist_ok=True)
