@@ -34,12 +34,13 @@ class GSheet:
             sheet.get_all_values(include_tailing_empty=False, include_tailing_empty_rows=False)
         )
 
-        sheet.set_basic_filter(start="A1", end=end_address)
+        sheet.set_basic_filter(start="A2", end=end_address)
 
     @staticmethod
     def get_last_address(all_values):
         end_address_row = len(all_values)
-        end_address_col = len(all_values[0])
+        #  all_values[1] will be the title row, get the number of headers to determine the no of columns
+        end_address_col = len(all_values[1])
         return pygsheets.Cell((end_address_row, end_address_col)).label
 
 
