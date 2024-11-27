@@ -53,7 +53,6 @@ class HsbcRate:
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
         }
 
-        self.record_date = None
         self.rate_record = {}
 
     def get_page(self):
@@ -63,7 +62,7 @@ class HsbcRate:
 
     def parse_data(self, response, table_no):
 
-        record_date = get_date()
+        insert_time = get_date()
         tree = etree.HTML(response)
 
         caption = tree.xpath(f"//*[@id='content_main_basicTable_{table_no}']/table/caption//strong/text()")[0]
@@ -83,7 +82,7 @@ class HsbcRate:
             cashback = rate.xpath("./td[7]//text()")[0].replace("£", "")
             max_loan = rate.xpath("./td[8]//text()")[0].replace("£", "")
 
-            rate_detail = [record_date, header, initial_interest_rate, follow_variable_rate, rate_period, ARPC,
+            rate_detail = [insert_time, header, initial_interest_rate, follow_variable_rate, rate_period, ARPC,
                            booking_fee, annual_overpayment_allowance, cashback, max_loan]
             logger.info(f'HSBC UK RATE - {caption} \'s rate : {rate_detail}')
 
@@ -123,12 +122,12 @@ class SoniaSwaps:
 
     @staticmethod
     def parse_data(response):
-        record_date = get_date()
+        insert_time = get_date()
 
-        current_date = response["CurrentDate"]
+        record_date = response["PreviousDayDate"]
         updated_time = response["Updated"].replace(" | ", " ")
 
-        sonia_swaps_rate = [record_date, current_date, updated_time]
+        sonia_swaps_rate = [insert_time, record_date, updated_time]
 
         for data in response["Rates"]:
             rate = data["PreviousDay"]
