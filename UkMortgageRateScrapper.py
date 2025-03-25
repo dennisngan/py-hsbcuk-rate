@@ -1,3 +1,6 @@
+"""
+pip install https://github.com/nithinmurali/pygsheets/archive/staging.zip
+"""
 import os.path
 from datetime import datetime
 
@@ -99,7 +102,9 @@ class HsbcRate:
                 gsheet.append_gsheet(sheet_title, self.rate_record[sheet_title])
             logger.info("Finish appending latest rates to google sheet...")
 
-            tg.send_message(f'Latest rates : {self.rate_record}')
+            for option in self.rate_record:
+                tg.send_message(f'{option} : {self.rate_record[option]}')
+
         except Exception as e:
             logger.error(f'Error - {e}')
             tg.send_message(e)
